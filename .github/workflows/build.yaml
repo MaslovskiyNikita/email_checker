@@ -24,10 +24,6 @@ jobs:
         pip install poetry
         poetry install
 
-    - name: Create requirements.txt (for data files)
-      run: |
-        poetry export -f requirements.txt --output requirements.txt --without-hashes
-
     - name: Clean previous builds
       run: |
         Remove-Item -Recurse -Force build, dist -ErrorAction SilentlyContinue
