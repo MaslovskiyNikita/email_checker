@@ -4,21 +4,23 @@ block_cipher = None
 
 a = Analysis(
     ['main.py'],
-    pathex=[],
+    pathex=['.'],  # Добавим текущую директорию
     binaries=[],
     datas=[
         ('email_checker', 'email_checker'),
-        ('requirements.txt', '.')
+        # Убрали requirements.txt так как он не нужен в конечном приложении
     ],
     hiddenimports=[
         'bs4',
         'urllib3',
-        'concurrent.futures',
+        'concurrent.futures', 
         'queue',
         'urllib.parse',
         'threading',
         'email_checker.mass_scanner',
-        'email_checker.interface'
+        'email_checker.interface',
+        'bs4.builder._htmlparser',  # Добавляем явно для BeautifulSoup
+        'urllib3.packages.six.moves'  # Добавляем для urllib3
     ],
     hookspath=[],
     hooksconfig={},
@@ -48,14 +50,15 @@ pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 exe = EXE(
     pyz,
     a.scripts,
-    [],
-    exclude_binaries=True,
+    a.binaries,
+    a.zipfiles,
+    a.datas,
     name='EmailFinder',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
-    upx=False,  # Важно: отключаем UPX из-за проблем с памятью
-    console=False,  # False для GUI приложения
+    upx=False,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,

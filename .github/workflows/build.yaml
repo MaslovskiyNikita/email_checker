@@ -13,16 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python
+    - name: Set up Python 3.12
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'
+        python-version: '3.12'  # Явно указываем 3.12 вместо 3.9
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install poetry
-        poetry install
+        poetry install --no-root
 
     - name: Clean previous builds
       run: |
@@ -32,14 +32,19 @@ jobs:
       run: |
         poetry run pyinstaller build.spec
 
-    - name: Check file size
+    - name: Check result
       run: |
-        $file = Get-Item "dist/EmailFinder.exe"
-        Write-Host "File size: $($file.Length / 1MB) MB"
+        if (Test-Path "dist/EmailFinder.exe") {
+          $file = Get-Item "dist/EmailFinder.exe"
+          Write-Host "✅ EXE создан успешно! Размер: $([math]::Round($file.Length/1MB, 2)) MB"
+        } else {
+          Write-Host "❌ EXE не создан"
+          Get-ChildItem -Recurse -ErrorAction SilentlyContinue
+          exit 1
+        }
 
     - name: Upload EXE as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: EmailFinder-Spec-Build
+        name: EmailFinder-Windows
         path: dist/EmailFinder.exe
-        retention-days: 90
