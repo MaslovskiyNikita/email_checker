@@ -2,35 +2,40 @@ name: Build Windows EXE
 
 on:
   push:
-    tags: ['v*']
-  workflow_dispatch:
+    tags: [ 'v*' ] # Запускать сборку при пуше новых тегов, например v1.0.0
+  workflow_dispatch: # Позволяет запускать сборку вручную из интерфейса GitHub
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    
+  build:
+    runs-on: windows-latest # Запускаем сборку на последней доступной Windows-машине
+    strategy:
+      matrix:
+        python-version: ["3.12"] # Укажите нужную версию Python
+
     steps:
-    - uses: actions/checkout@v3
-    
+    - name: Checkout code
+      uses: actions/checkout@v4
+
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
-        python-version: '3.12'
-    
-    - name: Install dependencies
-      run: |
-        pip install poetry
-        poetry install
-    
-    - name: Install PyInstaller
-      run: pip install pyinstaller
-      
-    - name: Build EXE
-      run: |
-        python build.py
-    
-    - name: Upload EXE
-      uses: actions/upload-artifact@v3
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Poetry
+      run: pip install poetry # :cite[7]
+
+    - name: Configure Poetry
+      run: poetry config virtualenvs.create false # :cite[1]
+
+    - name: Install dependencies with Poetry
+      run: poetry install --no-interaction
+
+    - name: Build EXE with PyInstaller
+      run: poetry run pyinstaller --onefile --windowed --name=EmailFinder --clean main.py
+
+    - name: Upload EXE as an artifact
+      uses: actions/upload-artifact@v4
       with:
         name: EmailFinder-Windows
         path: dist/EmailFinder.exe
+        retention-days: 30
