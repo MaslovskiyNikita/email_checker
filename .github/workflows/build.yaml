@@ -7,35 +7,26 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest # Запускаем сборку на последней доступной Windows-машине
-    strategy:
-      matrix:
-        python-version: ["3.12"] # Укажите нужную версию Python
-
+    runs-on: windows-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4 # Updated from v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
+      - name: Set up Python
+        uses: actions/setup-python@v5 # Updated from v4
+        with:
+          python-version: '3.12'
 
-    - name: Install Poetry
-      run: pip install poetry # :cite[7]
+      - name: Install dependencies
+        run: |
+          pip install poetry
+          poetry install
 
-    - name: Configure Poetry
-      run: poetry config virtualenvs.create false # :cite[1]
+      - name: Build EXE with PyInstaller
+        run: poetry run pyinstaller --onefile --windowed --name=EmailFinder --clean main.py
 
-    - name: Install dependencies with Poetry
-      run: poetry install --no-interaction
-
-    - name: Build EXE with PyInstaller
-      run: poetry run pyinstaller --onefile --windowed --name=EmailFinder --clean main.py
-
-    - name: Upload EXE as an artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: EmailFinder-Windows
-        path: dist/EmailFinder.exe
-        retention-days: 30
+      - name: Upload EXE as an artifact
+        uses: actions/upload-artifact@v4 # Updated from v3
+        with:
+          name: EmailFinder-Windows
+          path: dist/EmailFinder.exe
