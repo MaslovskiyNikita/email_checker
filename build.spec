@@ -4,29 +4,28 @@ block_cipher = None
 
 a = Analysis(
     ['main.py'],
-    pathex=['.'],  # Добавим текущую директорию
+    pathex=['.'],
     binaries=[],
     datas=[
         ('email_checker', 'email_checker'),
-        # Убрали requirements.txt так как он не нужен в конечном приложении
     ],
     hiddenimports=[
         'bs4',
-        'urllib3',
-        'concurrent.futures', 
+        'urllib3', 
+        'concurrent.futures',
         'queue',
         'urllib.parse',
         'threading',
         'email_checker.mass_scanner',
         'email_checker.interface',
-        'bs4.builder._htmlparser',  # Добавляем явно для BeautifulSoup
-        'urllib3.packages.six.moves'  # Добавляем для urllib3
+        'bs4.builder._htmlparser',
+        'urllib3.packages.six.moves'
     ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
     excludes=[
-        'tkinter', 
+        # Убрали tkinter из исключений - он нужен для GUI
         'matplotlib', 
         'pytest', 
         'notebook',
