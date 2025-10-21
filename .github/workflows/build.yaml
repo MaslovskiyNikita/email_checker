@@ -28,5 +28,5 @@ jobs:
       - name: Upload EXE as an artifact
         uses: actions/upload-artifact@v4 # Updated from v3
         with:
-          name: EmailFinder-Windows
+          name: EmailFinder-Windows 
           path: dist/EmailFinder.exe
