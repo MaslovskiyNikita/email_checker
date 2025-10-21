@@ -5,6 +5,24 @@ import tkinter as tk
 from tkinter import messagebox
 import subprocess
 
+import os
+import sys
+import psutil
+
+# Оптимизация памяти
+try:
+    import psutil
+    process = psutil.Process()
+    if hasattr(process, 'nice'):
+        process.nice(psutil.BELOW_NORMAL_PRIORITY_CLASS)
+except:
+    pass
+
+# Увеличиваем лимит рекурсии если нужно
+sys.setrecursionlimit(5000)
+
+# Отключаем буферизацию вывода для лучшего управления памятью
+os.environ['PYTHONUNBUFFERED'] = '1'
 def resource_path(relative_path):
     """Получение абсолютного пути к ресурсу для PyInstaller"""
     try:
